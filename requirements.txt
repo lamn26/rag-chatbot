@@ -4,3 +4,4 @@ unstructured
 unstructured-inference
 "unstructured[pdf]"
 "unstructured[docx]"
+sentence-transformers

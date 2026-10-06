@@ -3,6 +3,7 @@ import uuid
 from app.ingestion.loader import DocumentLoader
 from app.ingestion.parser import UnstructuredParser
 from app.ingestion.chunker import DocumentChunker
+from app.ingestion.metadata import enrich_metadata
 from app.schemas.chunk import DocumentChunk
 
 class IngestionPipeline:
@@ -22,10 +23,13 @@ class IngestionPipeline:
         file_path: str,
     ) -> list[DocumentChunk]:
 
+        # 1. Validate file
         path = self.loader.load(file_path)
 
+        # 2. Parse document
         documents = self.parser.parse(path)
 
+        # 3. Split document into chunks
         chunks = self.chunker.split(
             documents
         )
@@ -34,12 +38,14 @@ class IngestionPipeline:
 
         results = []
 
-        for chunk in chunks:
+        for chunk_index, chunk in enumerate(chunks):
 
             chunk_id = str(uuid.uuid4())
 
-            metadata = dict(
-                chunk.metadata
+            metadata = enrich_metadata(
+                metadata=chunk.metadata,
+                file_path=path,
+                chunk_index=chunk_index,
             )
 
             metadata["document_id"] = document_id
