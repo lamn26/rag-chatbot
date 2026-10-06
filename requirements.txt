@@ -1,0 +1,6 @@
+langchain-core
+langchain-text-splitters
+unstructured
+unstructured-inference
+"unstructured[pdf]"
+"unstructured[docx]"
