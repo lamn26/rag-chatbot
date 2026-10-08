@@ -6,3 +6,7 @@ unstructured-inference
 "unstructured[docx]"
 sentence-transformers
 qdrant-client
+transformers
+torch
+accelerate
+ollama
