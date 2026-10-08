@@ -13,7 +13,7 @@ class ContextBuilder:
                 "",
             )
 
-            file_name = payload.get(
+            filename = payload.get(
                 "filename",
                 "unknown",
             )
@@ -24,7 +24,7 @@ class ContextBuilder:
             )
 
             context = (
-                f"[Source: {file_name}, page: {page_number}]\n"
+                f"[Source: {filename}, page: {page_number}]\n"
                 f"{content}"
             )
 

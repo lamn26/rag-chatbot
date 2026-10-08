@@ -28,25 +28,12 @@ def main():
         score_threshold=0.825
     )
 
-    print("\n" + "=" * 80)
-    print("RETRIEVAL RESULTS")
-    print("=" * 80)
-
-    for i, result in enumerate(results):
-        payload = result.payload or {}
-
-        print(f"\nResult #{i + 1}")
-        print(f"Score: {result.score:.4f}")
-        print(f"Source: {payload.get('filename')}")
-        print(f"Page: {payload.get('page_number')}")
-        print(f"Content: {payload.get('content', '')}")
-
     context = context_builder.build(results=results)
 
     prompt = f"""
         You are a question-answering system that must strictly follow the provided context.
 
-        IMPORTANT:
+        IMPORTANT RULES:
         - The context is the ONLY source of truth.
         - You must NOT use your own knowledge, memory, or assumptions.
         - If the context is empty, you MUST NOT answer the question.
@@ -69,11 +56,6 @@ def main():
     print("QUESTION")
     print("-" * 80)
     print(question)
-
-    print("\n" + "-" * 80)
-    print("PROMPT")
-    print("-" * 80)
-    print(prompt)
 
     print("\n" + "-" * 80)
     print("ANSWER")
