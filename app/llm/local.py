@@ -5,9 +5,11 @@ from app.llm.base import BaseLLM
 class LocalLLM(BaseLLM):
     def __init__(
         self,
-        model_name: str = "qwen2.5:1.5b",
+        model_name: str = "qwen2.5:7b",
+        temperature: float = 0,
     ):
         self.model_name = model_name
+        self.temperature = temperature
 
     def generate(
         self,
@@ -21,6 +23,9 @@ class LocalLLM(BaseLLM):
                     "content": prompt,
                 },
             ],
+            options={
+                "temperature": self.temperature
+            }
         )
 
         return response.message.content

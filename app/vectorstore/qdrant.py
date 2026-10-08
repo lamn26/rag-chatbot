@@ -71,12 +71,14 @@ class QdrantVectorStore(BaseVectorStore):
         self,
         query_vector,
         top_k: int = 5,
+        score_threshold: float | None = None,
     ):
 
         results = self.client.query_points(
             collection_name=self.collection_name,
             query=query_vector,
             limit=top_k,
+            score_threshold=score_threshold
         )
 
         return results.points

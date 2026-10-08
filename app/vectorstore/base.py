@@ -23,5 +23,6 @@ class BaseVectorStore(ABC):
         self,
         query_vector,
         top_k: int = 5,
+        score_threshold: float | None = None,
     ):
         pass

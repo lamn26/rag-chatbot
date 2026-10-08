@@ -14,12 +14,14 @@ class Retriever:
         self,
         query: str,
         top_k: int = 5,
+        score_threshold: float | None = None
     ):
         query_vector = self.embedding_model.embed_query(query)
 
         results = self.vector_store.search(
             query_vector=query_vector,
             top_k=top_k,
+            score_threshold=score_threshold
         )
 
         return results
