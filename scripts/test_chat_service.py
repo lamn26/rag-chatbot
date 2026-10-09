@@ -8,11 +8,13 @@ from app.llm.local import LocalLLM
 
 from app.services.chat_service import ChatService
 
+collection_name = "documents_qwen3"
+
 def main():
     embedding_model = LocalEmbedding()
 
     vector_store = QdrantVectorStore(
-        collection_name="documents"
+        collection_name=collection_name
     )
 
     retriever = Retriever(
@@ -30,11 +32,13 @@ def main():
         llm=llm
     )
 
-    question = "What is the Transformer architecture?"
-    # question = "What is the capital of France?"
+    # question = "What is the Transformer architecture?"
+    question = "What is the capital of France?"
 
     result = chat_service.chat(
-        question=question
+        question=question,
+        top_k=5,
+        score_threshold=None
     )
 
     print("\n" + "-" * 80)

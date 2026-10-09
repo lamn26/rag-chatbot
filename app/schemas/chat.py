@@ -9,14 +9,14 @@ class ChatRequest(BaseModel):
     )
 
     top_k: int = Field(
-        default=5,
+        default=10,
         ge=1,
         le=20,
         description="Maximum number of chunks to retrieve",
     )
 
     score_threshold: float = Field(
-        default=0.825,
+        default=0,
         ge=0.0,
         le=1.0,
         description="Minimum similarity score for retrieval",

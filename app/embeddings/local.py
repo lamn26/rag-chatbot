@@ -1,41 +1,47 @@
-from sentence_transformers import SentenceTransformer
+from ollama import embed
 
 from app.embeddings.base import BaseEmbedding
-
 
 class LocalEmbedding(BaseEmbedding):
 
     def __init__(
         self,
-        model_name: str = "intfloat/multilingual-e5-small",
+        model_name: str = "qwen3-embedding:0.6b",
+        batch_size: int = 8,
     ):
-        self.model = SentenceTransformer(model_name)
+        self.model_name = model_name
+        self.batch_size = batch_size
 
     def embed_documents(
         self,
         texts: list[str],
     ) -> list[list[float]]:
 
-        texts = [
-            f"passage: {text}"
-            for text in texts
-        ]
+        if not texts:
+            return []
 
-        embeddings = self.model.encode(
-            texts,
-            normalize_embeddings=True,
-        )
+        all_embeddings = []
 
-        return embeddings.tolist()
+        for start in range(0, len(texts), self.batch_size):
+            batch = texts[start:start + self.batch_size]
+
+            response = embed(
+                model=self.model_name,
+                input=batch,
+            )
+
+            all_embeddings.extend(response.embeddings)
+
+        return all_embeddings
 
     def embed_query(
         self,
         text: str,
     ) -> list[float]:
 
-        embedding = self.model.encode(
-            f"query: {text}",
-            normalize_embeddings=True,
+        response = embed(
+            model=self.model_name,
+            input=text,
         )
 
-        return embedding.tolist()
+        return response.embeddings[0]

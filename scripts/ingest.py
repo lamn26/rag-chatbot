@@ -1,12 +1,13 @@
 from app.ingestion.pipeline import IngestionPipeline
 
+folder_path = "data/raw"
 
 def main():
 
     pipeline = IngestionPipeline()
 
-    chunks = pipeline.process(
-        "data/raw/Attention Is All You Need.pdf"
+    chunks = pipeline.process_folder(
+        folder_path=folder_path
     )
 
     print(f"\nTotal chunks: {len(chunks)}")

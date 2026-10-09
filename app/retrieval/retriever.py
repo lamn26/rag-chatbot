@@ -13,7 +13,7 @@ class Retriever:
     def retrieve(
         self,
         query: str,
-        top_k: int = 5,
+        top_k: int,
         score_threshold: float | None = None
     ):
         query_vector = self.embedding_model.embed_query(query)

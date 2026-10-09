@@ -7,13 +7,14 @@ from app.retrieval.context_builder import ContextBuilder
 from app.llm.local import LocalLLM
 from app.services.chat_service import ChatService
 
+collection_name = "documents_qwen3"
 
 @lru_cache(maxsize=1)
 def get_chat_service() -> ChatService:
     embedding_model = LocalEmbedding()
 
     vector_store = QdrantVectorStore(
-        collection_name="documents"
+        collection_name=collection_name
     )
 
     retriever = Retriever(

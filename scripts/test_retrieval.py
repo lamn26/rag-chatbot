@@ -3,11 +3,13 @@ from app.vectorstore.qdrant import QdrantVectorStore
 from app.retrieval.retriever import Retriever
 from app.retrieval.context_builder import ContextBuilder
 
+collection_name = "documents_qwen3"
+
 def main():
     embedding_model = LocalEmbedding()
 
     vector_store = QdrantVectorStore(
-        collection_name="documents"
+        collection_name=collection_name
     )
 
     retriever = Retriever(

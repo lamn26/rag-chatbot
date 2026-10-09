@@ -4,11 +4,13 @@ from app.retrieval.retriever import Retriever
 from app.retrieval.context_builder import ContextBuilder
 from app.llm.local import LocalLLM
 
+collection_name = "documents_qwen3"
+
 def main():
     embedding_model = LocalEmbedding()
 
     vector_store = QdrantVectorStore(
-        collection_name="documents"
+        collection_name=collection_name
     )
 
     retriever = Retriever(
@@ -20,12 +22,12 @@ def main():
 
     llm = LocalLLM()
 
-    question = "What is the Transformer architecture?"
+    question = "What is empiricism in Scrum?"
 
     results = retriever.retrieve(
         query=question,
-        top_k=5,
-        score_threshold=0.825
+        top_k=10,
+        score_threshold=None
     )
 
     context = context_builder.build(results=results)
@@ -56,6 +58,11 @@ def main():
     print("QUESTION")
     print("-" * 80)
     print(question)
+
+    print("\n" + "-" * 80)
+    print("PROMPT")
+    print("-" * 80)
+    print(prompt)
 
     print("\n" + "-" * 80)
     print("ANSWER")

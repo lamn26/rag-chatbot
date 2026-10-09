@@ -1,69 +1,31 @@
 from app.embeddings.local import LocalEmbedding
-import numpy as np
 
 def main():
-
     embedding_model = LocalEmbedding()
 
     documents = [
-        "The Transformer architecture is based entirely on attention mechanisms.",
-        "Transformers do not use recurrent neural networks.",
-        "Convolutional neural networks are commonly used for image processing.",
+        "The Transformer uses attention mechanisms.",
+        "Paris is the capital of France.",
+        "Con mèo đang nằm trên ghế sofa.",
     ]
 
-    print("Generating document embeddings...")
-
-    embeddings = embedding_model.embed_documents(
+    document_vectors = embedding_model.embed_documents(
         documents
     )
 
-    print(
-        f"Number of embeddings: {len(embeddings)}"
+    query_vector = embedding_model.embed_query(
+        "What is the Transformer architecture?"
     )
 
-    print(
-        f"Embedding dimension: {len(embeddings[0])}"
-    )
+    print("Number of document embeddings:", len(document_vectors))
+    print("Document embedding dimension:", len(document_vectors[0]))
+    print("Query embedding dimension:", len(query_vector))
 
-    print(
-        f"First 10 values:\n{embeddings[0][:10]}"
-    )
+    assert len(document_vectors) == len(documents)
+    assert len(document_vectors[0]) == len(query_vector)
+    assert all(len(vector) == len(query_vector) for vector in document_vectors)
 
-    query = "What is the Transformer architecture?"
-
-    print("\nGenerating query embedding...")
-
-    query_embedding = embedding_model.embed_query(
-        query
-    )
-
-    print(
-        f"Query embedding dimension: "
-        f"{len(query_embedding)}"
-    )
-
-    print(
-        f"First 10 values:\n"
-        f"{query_embedding[:10]}"
-    )
-
-    print("\nSimilarity with each document:")
-
-    query_vector = np.array(query_embedding)
-
-    for index, embedding in enumerate(embeddings):
-
-        document_vector = np.array(embedding)
-
-        similarity = np.dot(
-            query_vector,
-            document_vector,
-        )
-
-        print(
-            f"Document {index + 1}: "
-            f"{similarity:.4f}"
-        )
+    print("Embedding test passed!")
 
 
 if __name__ == "__main__":

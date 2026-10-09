@@ -10,8 +10,8 @@ from qdrant_client.models import (
 class QdrantVectorStore(BaseVectorStore):
     def __init__(
         self,
+        collection_name: str,
         url: str="http://localhost:6333",
-        collection_name: str = "documents",
     ):
         self.client = QdrantClient(
             url=url,

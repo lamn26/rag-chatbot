@@ -2,26 +2,26 @@ from app.ingestion.pipeline import IngestionPipeline
 from app.embeddings.local import LocalEmbedding
 from app.vectorstore.qdrant import QdrantVectorStore
 
+folder_path = "data/raw"
+collection_name = "documents_qwen3"
+batch_size = 8
 
 def main():
-
-    file_path = (
-        "data/raw/Attention Is All You Need.pdf"
-    )
-
     #1. Ingestion
     print("Ingesting ....")
 
     pipeline = IngestionPipeline()
-    chunks = pipeline.process(
-        file_path=file_path
+    chunks = pipeline.process_folder(
+        folder_path=folder_path
     )
 
     print(f"Created {len(chunks)} chunks.")
 
     #2. Embedding
     print("\nLoading model ....")
-    embedding_model = LocalEmbedding()
+    embedding_model = LocalEmbedding(
+        batch_size=batch_size
+    )
 
     print("\nGenerating ....")
     texts = [chunk.content for chunk in chunks]
@@ -41,7 +41,7 @@ def main():
     print("\nConnecting ....")
 
     vector_store = QdrantVectorStore(
-        collection_name="documents"
+        collection_name=collection_name
     )
 
     vector_store.create_collection(

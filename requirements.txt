@@ -1,5 +1,6 @@
 langchain-core
 langchain-text-splitters
+langchain-experimental
 unstructured
 unstructured-inference
 "unstructured[pdf]"

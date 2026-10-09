@@ -28,8 +28,8 @@ class ChatService:
     def chat(
         self,
         question: str,
-        top_k: int = 5,
-        score_threshold: float = 0.825,
+        top_k: int,
+        score_threshold: float | None = None,
     ) -> dict:
         results = self.retriever.retrieve(
             query=question,
