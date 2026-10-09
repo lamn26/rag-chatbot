@@ -10,3 +10,5 @@ transformers
 torch
 accelerate
 ollama
+fastapi
+"uvicorn[standard]"
