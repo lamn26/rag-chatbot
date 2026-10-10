@@ -5,6 +5,10 @@ from qdrant_client.models import (
     Distance,
     VectorParams,
     PointStruct,
+    Filter,
+    FieldCondition,
+    MatchValue,
+    FilterSelector,
 )
 
 class QdrantVectorStore(BaseVectorStore):
@@ -109,3 +113,91 @@ class QdrantVectorStore(BaseVectorStore):
         )
 
         return results.points
+
+    def list_documents(self) -> list[dict]:
+        documents = {}
+
+        offset = None
+
+        while True:
+            points, next_offset = self.client.scroll(
+                collection_name=self.collection_name,
+                limit=256,
+                offset=offset,
+                with_payload=True,
+                with_vectors=True,
+            )
+
+            for point in points:
+                payload = point.payload or {}
+
+                document_id = payload.get("document_id")
+                filename = payload.get("filename")
+
+                if not document_id:
+                    continue
+
+                if document_id not in documents:
+                    documents[document_id] = {
+                        "document_id": document_id,
+                        "filename": filename or "unknown",
+                        "chunks_count": 0,
+                    }
+
+                documents[document_id]["chunks_count"] += 1
+
+            if next_offset is None:
+                break
+
+            offset = next_offset
+
+        return list(documents.values())
+
+    def get_document_by_id(self, document_id: str) -> dict | None:
+        points, _ = self.client.scroll(
+            collection_name=self.collection_name,
+            scroll_filter={
+                "must": [
+                    {
+                        "key": "document_id",
+                        "match": {"value": document_id}
+                    }
+                ]
+            },
+            limit=1,
+            with_payload=True,
+            with_vectors=False,
+        )
+
+        if not points:
+            return None
+
+        payload = points[0].payload or {}
+
+        return {
+            "document_id": document_id,
+            "filename": payload.get("filename", "unknown"),
+            "metadata": {
+                "file_directory": payload.get("file_directory"),
+                "last_modified": payload.get("last_modified"),
+                "filetype": payload.get("filetype"),
+                "source": payload.get("source"),
+                "languages": payload.get("languages"),
+            }
+        }
+
+    def delete_document(self, document_id: str) -> None:
+        self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=FilterSelector(
+                filter=Filter(
+                    must=[
+                        FieldCondition(
+                            key="document_id",
+                            match=MatchValue(value=document_id)
+                        )
+                    ]
+                )
+            ),
+            wait=True,
+        )

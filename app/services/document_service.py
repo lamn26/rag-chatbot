@@ -82,3 +82,36 @@ class DocumentService:
             if temp_path.exists():
                 temp_path.unlink()
             await file.close()
+
+    def list_documents(self):
+        documents = self.vector_store.list_documents()
+
+        return {
+            "documents": documents,
+            "total": len(documents)
+        }
+
+    def get_document_by_id(self, document_id: str):
+        document = self.vector_store.get_document_by_id(document_id=document_id)
+
+        if document is None:
+            return None
+
+        documents = self.vector_store.list_documents()
+
+        for item in documents:
+            if item["document_id"] == document_id:
+                document["chunks_count"] = item["chunks_count"]
+                break
+
+        return document
+
+    def delete_document(self, document_id: str) -> bool:
+        document = self.vector_store.get_document_by_id(document_id=document_id)
+
+        if document is None:
+            return False
+
+        self.vector_store.delete_document(document_id=document_id)
+        return True
+    
