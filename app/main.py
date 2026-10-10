@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 
-from app.api.routes import chat
+from app.api.routes import (
+    chat,
+    documents,
+)
 
 app = FastAPI(
     title="RAG Chatbot API",
@@ -9,6 +12,7 @@ app = FastAPI(
 )
 
 app.include_router(chat.router)
+app.include_router(documents.router)
 
 @app.get("/health", tags=["Health"])
 def health_check():

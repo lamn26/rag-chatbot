@@ -44,28 +44,55 @@ class QdrantVectorStore(BaseVectorStore):
     def add_documents(
         self,
         documents,
-        embeddings
+        embeddings,
+        batch_size: int = 8,
     ) -> None:
-        points = []
-
-        for document, embedding in zip(documents, embeddings):
-            payload = {
-                "content": document.content,
-                **document.metadata
-            }
-
-            point = PointStruct(
-                id=document.chunk_id,
-                vector=embedding,
-                payload=payload,
+        if len(documents) != len(embeddings):
+            raise ValueError(
+                "The number of documents must match "
+                "the number of embeddings."
             )
 
-            points.append(point)
+        if batch_size < 1:
+            raise ValueError("batch_size must be at least 1.")
 
-        self.client.upsert(
-            collection_name=self.collection_name,
-            points=points,
-        )
+        total_documents = len(documents)
+
+        for start in range(0, total_documents, batch_size):
+            end = min(start + batch_size, total_documents)
+
+            batch_documents = documents[start:end]
+            batch_embeddings = embeddings[start:end]
+
+            points = []
+
+            for document, embedding in zip(
+                batch_documents,
+                batch_embeddings,
+            ):
+                payload = {
+                    "content": document.content,
+                    **document.metadata,
+                }
+
+                point = PointStruct(
+                    id=document.chunk_id,
+                    vector=embedding,
+                    payload=payload,
+                )
+
+                points.append(point)
+
+            self.client.upsert(
+                collection_name=self.collection_name,
+                points=points,
+                wait=True,
+            )
+
+            print(
+                f"Uploaded {end}/{total_documents} chunks "
+                f"to Qdrant."
+            )
 
     def search(
         self,
