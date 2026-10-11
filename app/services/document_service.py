@@ -7,6 +7,10 @@ from app.embeddings.local import LocalEmbedding
 from app.vectorstore.qdrant import QdrantVectorStore
 from app.schemas.document import DocumentUploadResponse
 
+from app.utils.hashing import calculate_sha256
+
+from app.core.exceptions import DuplicateDocumentError
+
 class DocumentService:
     SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".doc", ".txt"}
 
@@ -46,6 +50,15 @@ class DocumentService:
             if not content:
                 raise ValueError("Uploaded file is empty.")
 
+            file_hash = calculate_sha256(content=content)
+
+            if self.vector_store.check_document_exist_by_hash(
+                file_hash=file_hash
+            ):
+                raise DuplicateDocumentError(
+                    "This document has already been uploaded."
+                )
+
             temp_path.write_bytes(content)
 
             chunks = self.ingestion_pipeline.process_file(
@@ -60,6 +73,7 @@ class DocumentService:
             for chunk in chunks:
                 chunk.metadata["filename"] = filename
                 chunk.metadata["source"] = filename
+                chunk.metadata["file_hash"] = file_hash
 
             texts = [chunk.content for chunk in chunks]
             embeddings = self.embedding_model.embed_documents(texts=texts)

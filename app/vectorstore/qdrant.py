@@ -93,10 +93,9 @@ class QdrantVectorStore(BaseVectorStore):
                 wait=True,
             )
 
-            print(
-                f"Uploaded {end}/{total_documents} chunks "
-                f"to Qdrant."
-            )
+        print(
+            f"Uploaded successful !"
+        )
 
     def search(
         self,
@@ -201,3 +200,21 @@ class QdrantVectorStore(BaseVectorStore):
             ),
             wait=True,
         )
+
+    def check_document_exist_by_hash(self, file_hash: str) -> bool:
+        points, _ = self.client.scroll(
+            collection_name=self.collection_name,
+            scroll_filter={
+                "must": [
+                    {
+                        "key": "file_hash",
+                        "match": {"value": file_hash}
+                    }
+                ]
+            },
+            limit=1,
+            with_payload=True,
+            with_vectors=False,
+        )
+
+        return len(points) > 0

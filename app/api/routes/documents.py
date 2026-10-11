@@ -16,6 +16,8 @@ from app.schemas.document import (
 )
 from app.services.document_service import DocumentService
 
+from app.core.exceptions import DuplicateDocumentError
+
 router = APIRouter(
     prefix="/api/v1/documents",
     tags=["Documents"],
@@ -32,6 +34,11 @@ async def upload_document(
 ) -> DocumentUploadResponse:
     try:
         return await document_service.upload_document(file=file)
+    except DuplicateDocumentError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e),
+        )
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -95,3 +102,4 @@ def delete_document(
         document_id=document_id,
         status="deleted",
     )
+
