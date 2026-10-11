@@ -218,3 +218,10 @@ class QdrantVectorStore(BaseVectorStore):
         )
 
         return len(points) > 0
+
+    def delete_collection(self) -> None:
+        self.client.delete_collection(
+            collection_name=self.collection_name
+        )
+
+    

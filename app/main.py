@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from app.api.routes import (
     chat,
     documents,
+    session,
 )
 
 app = FastAPI(
@@ -13,6 +14,7 @@ app = FastAPI(
 
 app.include_router(chat.router)
 app.include_router(documents.router)
+app.include_router(session.router)
 
 @app.get("/health", tags=["Health"])
 def health_check():

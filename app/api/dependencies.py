@@ -1,5 +1,10 @@
-from functools import lru_cache
+from fastapi import (
+    Depends,
+    Header,
+    HTTPException,
+)
 
+from app.core.session_manager import session_manager
 from app.embeddings.local import LocalEmbedding
 from app.vectorstore.qdrant import QdrantVectorStore
 from app.retrieval.retriever import Retriever
@@ -10,10 +15,24 @@ from app.services.chat_service import ChatService
 from app.ingestion.pipeline import IngestionPipeline
 from app.services.document_service import DocumentService
 
-collection_name = "documents_qwen3"
+def get_session_collection_name(
+    session_id: str = Header(..., alias="X-Session-ID"),
+) -> str:
+    try:
+        return session_manager.get_collection_name(
+            session_id=session_id
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        ) from e
 
-@lru_cache(maxsize=1)
-def get_chat_service() -> ChatService:
+def get_chat_service(
+    collection_name: str = Depends(
+        get_session_collection_name
+    ),
+) -> ChatService:
     embedding_model = LocalEmbedding()
 
     vector_store = QdrantVectorStore(
@@ -35,12 +54,15 @@ def get_chat_service() -> ChatService:
         llm=llm,
     )
 
-@lru_cache(maxsize=1)
-def get_document_service() -> DocumentService:
+def get_document_service(
+    collection_name: str = Depends(
+        get_session_collection_name
+    )
+) -> DocumentService:
     return DocumentService(
         ingestion_pipeline=IngestionPipeline(),
         embedding_model=LocalEmbedding(),
         vector_store=QdrantVectorStore(
-            collection_name="documents_qwen3"
+            collection_name=collection_name
         ),
     )
