@@ -28,6 +28,7 @@ class SourceItem(BaseModel):
     page_number: int | str | None = None
     chunk_index: int | None = None
     score: float
+    content: str
 
 
 class ChatResponse(BaseModel):

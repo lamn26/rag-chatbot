@@ -55,14 +55,17 @@ def get_chat_service(
     )
 
 def get_document_service(
+    session_id: str = Header(..., alias="X-Session-ID"),
     collection_name: str = Depends(
         get_session_collection_name
-    )
+    ),
 ) -> DocumentService:
+    
     return DocumentService(
         ingestion_pipeline=IngestionPipeline(),
         embedding_model=LocalEmbedding(),
         vector_store=QdrantVectorStore(
             collection_name=collection_name
         ),
+        session_id=session_id
     )

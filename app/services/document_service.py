@@ -19,10 +19,12 @@ class DocumentService:
         ingestion_pipeline: IngestionPipeline,
         embedding_model: LocalEmbedding,
         vector_store: QdrantVectorStore,
+        session_id: str,
     ):
         self.ingestion_pipeline = ingestion_pipeline
         self.embedding_model = embedding_model
         self.vector_store = vector_store
+        self.session_id = session_id
 
     async def upload_document(
         self,
@@ -39,7 +41,12 @@ class DocumentService:
                 f"Unsupported file type: {extension}"
             )
 
-        upload_dir = Path("data/raw")
+        upload_dir = (
+            Path("data/sessions")
+            / self.session_id
+            / "raw"
+        )
+
         upload_dir.mkdir(parents=True, exist_ok=True)
 
         temp_path = upload_dir / f"{uuid.uuid4()}{extension}"

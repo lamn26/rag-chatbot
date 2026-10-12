@@ -62,6 +62,7 @@ class ChatService:
                 "page_number": payload.get("page_number"),
                 "chunk_index": payload.get("chunk_index"),
                 "score": result.score,
+                "content": payload.get("content"),
             })
 
         return {
