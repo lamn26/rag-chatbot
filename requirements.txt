@@ -16,3 +16,6 @@ fastapi
 python-multipart
 streamlit
 requests
+google-genai
+pydantic
+pydantic-settings
