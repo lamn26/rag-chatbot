@@ -57,6 +57,9 @@ def render_chat_panel() -> None:
 
     st.session_state.messages.append(user_message)
 
+    with st.chat_message("user"):
+        st.markdown(user_message["content"])
+
     with st.chat_message("assistant"):
         try:
             with st.spinner("Searching documents and generating answer..."):

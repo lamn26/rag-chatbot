@@ -1,16 +1,18 @@
-from ollama import embed
+from ollama import Client
 
 from app.embeddings.base import BaseEmbedding
+from app.core.config import settings
 
 class LocalEmbedding(BaseEmbedding):
 
     def __init__(
         self,
-        model_name: str = "qwen3-embedding:0.6b",
+        model_name: str | None = None,
         batch_size: int = 8,
     ):
-        self.model_name = model_name
+        self.model_name = model_name or settings.LOCAL_EMBEDDING_MODEL
         self.batch_size = batch_size
+        self.client = Client(host=settings.OLLAMA_BASE_URL)
 
     def embed_documents(
         self,
@@ -25,7 +27,7 @@ class LocalEmbedding(BaseEmbedding):
         for start in range(0, len(texts), self.batch_size):
             batch = texts[start:start + self.batch_size]
 
-            response = embed(
+            response = self.client.embed(
                 model=self.model_name,
                 input=batch,
             )
@@ -39,7 +41,7 @@ class LocalEmbedding(BaseEmbedding):
         text: str,
     ) -> list[float]:
 
-        response = embed(
+        response = self.client.embed(
             model=self.model_name,
             input=text,
         )

@@ -1,4 +1,5 @@
 from app.vectorstore.base import BaseVectorStore
+from app.core.config import settings
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
@@ -15,10 +16,10 @@ class QdrantVectorStore(BaseVectorStore):
     def __init__(
         self,
         collection_name: str,
-        url: str="http://localhost:6333",
+        url: str | None = None,
     ):
         self.client = QdrantClient(
-            url=url,
+            url=url or settings.QDRANT_URL,
         )
 
         self.collection_name = collection_name

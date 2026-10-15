@@ -9,6 +9,51 @@ services:
     
     volumes:
       - qdrant_data:/qdrant/storage
+    
+    restart: unless-stopped
+  
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    container_name: rag-chatbot-backend
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+      QDRANT_URL: "http://qdrant:6333"
+      LOCAL_LLM_MODEL: "qwen2.5:7b"
+      LOCAL_EMBEDDING_MODEL: "qwen3-embedding:0.6b"
+      LOCAL_VECTOR_SIZE: "1024"
+    
+    volumes:
+      - ./data/sessions:/app/data/sessions
+
+    depends_on:
+      - qdrant
+
+    restart: unless-stopped
+  
+  frontend:
+    build:
+      context: .
+      dockerfile: FE/Dockerfile
+
+    container_name: rag-chatbot-frontend
+
+    ports:
+      - "8501:8501"
+
+    environment:
+      API_BASE_URL: "http://backend:8000"
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
 
 volumes:
   qdrant_data:

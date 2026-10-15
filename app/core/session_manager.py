@@ -5,9 +5,10 @@ from pathlib import Path
 from uuid import uuid4
 
 from app.vectorstore.qdrant import QdrantVectorStore
+from app.core.config import settings
 
 # SESSION_TIMEOUT_SECONDS = 90
-VECTOR_SIZE = 1024
+VECTOR_SIZE = settings.LOCAL_VECTOR_SIZE
 SESSION_ROOT = Path("data/sessions")
 
 class SessionManager:
