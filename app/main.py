@@ -7,6 +7,7 @@ from app.api.routes import (
     chat,
     documents,
     session,
+    health,
 )
 
 # from app.core.session_manager import session_manager
@@ -46,7 +47,4 @@ app = FastAPI(
 app.include_router(chat.router)
 app.include_router(documents.router)
 app.include_router(session.router)
-
-@app.get("/health", tags=["Health"])
-def health_check():
-    return {"status": "ok"}
+app.include_router(health.router)

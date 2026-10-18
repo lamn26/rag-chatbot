@@ -11,6 +11,13 @@ services:
       - qdrant_data:/qdrant/storage
     
     restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/127.0.0.1/6333"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   
   backend:
     build:
@@ -23,19 +30,33 @@ services:
       - "8000:8000"
 
     environment:
-      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
-      QDRANT_URL: "http://qdrant:6333"
-      LOCAL_LLM_MODEL: "qwen2.5:7b"
-      LOCAL_EMBEDDING_MODEL: "qwen3-embedding:0.6b"
-      LOCAL_VECTOR_SIZE: "1024"
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+
+      LOCAL_LLM_MODEL: ${LOCAL_LLM_MODEL}
+      LOCAL_EMBEDDING_MODEL: ${LOCAL_EMBEDDING_MODEL}
+      LOCAL_VECTOR_SIZE: ${LOCAL_VECTOR_SIZE}
+
+      API_KEY: ""
+      CLOUD_LLM_MODEL: ${CLOUD_LLM_MODEL}
+      CLOUD_EMBEDDING_MODEL: ${CLOUD_EMBEDDING_MODEL}
+      CLOUD_VECTOR_SIZE: ${CLOUD_VECTOR_SIZE}
     
     volumes:
       - ./data/sessions:/app/data/sessions
 
     depends_on:
-      - qdrant
+      qdrant:
+        condition: service_healthy
 
     restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
   
   frontend:
     build:
@@ -54,6 +75,13 @@ services:
       - backend
 
     restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
 volumes:
   qdrant_data:
