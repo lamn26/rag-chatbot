@@ -30,28 +30,30 @@ class DocumentService:
         self,
         file: UploadFile,
     ) -> DocumentUploadResponse:
-        if not file.filename:
-            raise ValueError("Filename is required.")
-
-        filename = Path(file.filename).name
-        extension = Path(file.filename).suffix.lower()
-
-        if extension not in self.SUPPORTED_EXTENSIONS:
-            raise ValueError(
-                f"Unsupported file type: {extension}"
-            )
-
-        upload_dir = (
-            Path("data/sessions")
-            / self.session_id
-            / "raw"
-        )
-
-        upload_dir.mkdir(parents=True, exist_ok=True)
-
-        temp_path = upload_dir / f"{uuid.uuid4()}{extension}"
+        temp_path = None
 
         try:
+            if not file.filename:
+                raise ValueError("Filename is required.")
+
+            filename = Path(file.filename).name
+            extension = Path(file.filename).suffix.lower()
+
+            if extension not in self.SUPPORTED_EXTENSIONS:
+                raise ValueError(
+                    f"Unsupported file type: {extension}"
+                )
+
+            upload_dir = (
+                Path("data/sessions")
+                / self.session_id
+                / "raw"
+            )
+
+            upload_dir.mkdir(parents=True, exist_ok=True)
+
+            temp_path = upload_dir / f"{uuid.uuid4()}{extension}"
+
             content = await file.read()
 
             if not content:
@@ -100,7 +102,7 @@ class DocumentService:
             )
 
         finally:
-            if temp_path.exists():
+            if temp_path is not None and temp_path.exists():
                 temp_path.unlink()
             await file.close()
 
