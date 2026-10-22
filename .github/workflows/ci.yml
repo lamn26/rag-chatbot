@@ -8,6 +8,17 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
 
+    env:
+      LOCAL_LLM_MODEL: qwen2.5:7b
+      LOCAL_EMBEDDING_MODEL: qwen3-embedding:0.6b
+      LOCAL_VECTOR_SIZE: "1024"
+      OLLAMA_BASE_URL: http://localhost:11434
+      QDRANT_URL: http://localhost:6333
+      API_KEY: ci-placeholder
+      CLOUD_LLM_MODEL: ci-placeholder
+      CLOUD_EMBEDDING_MODEL: ci-placeholder
+      CLOUD_VECTOR_SIZE: "1024"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
