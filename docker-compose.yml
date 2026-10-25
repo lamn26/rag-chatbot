@@ -37,11 +37,6 @@ services:
       LOCAL_EMBEDDING_MODEL: ${LOCAL_EMBEDDING_MODEL}
       LOCAL_VECTOR_SIZE: ${LOCAL_VECTOR_SIZE}
 
-      API_KEY: ""
-      CLOUD_LLM_MODEL: ${CLOUD_LLM_MODEL}
-      CLOUD_EMBEDDING_MODEL: ${CLOUD_EMBEDDING_MODEL}
-      CLOUD_VECTOR_SIZE: ${CLOUD_VECTOR_SIZE}
-    
     volumes:
       - ./data/sessions:/app/data/sessions
 

@@ -16,5 +16,4 @@ python-docx
 
 streamlit
 requests
-google-genai
 pytest

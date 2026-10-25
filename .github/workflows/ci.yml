@@ -14,10 +14,6 @@ jobs:
       LOCAL_VECTOR_SIZE: "1024"
       OLLAMA_BASE_URL: http://localhost:11434
       QDRANT_URL: http://localhost:6333
-      API_KEY: ci-placeholder
-      CLOUD_LLM_MODEL: ci-placeholder
-      CLOUD_EMBEDDING_MODEL: ci-placeholder
-      CLOUD_VECTOR_SIZE: "1024"
 
     steps:
       - name: Checkout repository
