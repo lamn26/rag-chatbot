@@ -1,7 +1,6 @@
 import requests
 import streamlit as st
 
-# from api.sessions import send_heartbeat
 from components.document_panel import render_document_panel
 from components.session_panel import render_session_panel
 from components.chat_panel import render_chat_panel
@@ -20,22 +19,7 @@ if "collection_name" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# @st.fragment(run_every="20s")
-# def heartbeat_fragment():
-#     session_id = st.session_state.get("session_id")
-#
-#     if session_id:
-#         try:
-#             send_heartbeat(session_id=session_id)
-#         except Exception as e:
-#             print(f"[HEARTBEAT] Failed: {e}")
-
 render_session_panel() # render sidebar
-
-
-# if st.session_state.session_id:
-#     heartbeat_fragment()
-
 
 # render main page
 if st.session_state.session_id is None:

@@ -1,43 +1,3 @@
-# from pathlib import Path
-
-# from langchain_core.documents import Document as LangChainDocument
-# from unstructured.partition.auto import partition
-
-# class UnstructuredParser:
-
-#     def parse(
-#         self,
-#         file_path: Path,
-#     ) -> list[LangChainDocument]:
-
-#         elements = partition(
-#             filename=str(file_path),
-#         )
-
-#         documents = []
-
-#         for element in elements:
-
-#             text = str(element).strip()
-
-#             if not text:
-#                 continue
-
-#             metadata = element.metadata.to_dict()
-
-#             metadata["source"] = str(file_path)
-#             metadata["filename"] = file_path.name
-
-#             documents.append(
-#                 LangChainDocument(
-#                     page_content=text,
-#                     metadata=metadata,
-#                 )
-#             )
-
-#         return documents
-
-
 from pathlib import Path
 
 from docx import Document as DocxDocument
@@ -127,7 +87,6 @@ class UnstructuredParser:
             if paragraph.text.strip()
         ]
 
-        # Preserve paragraph separation for downstream chunking.
         text = "\n".join(paragraphs)
 
         document = self._build_document(
@@ -142,7 +101,6 @@ class UnstructuredParser:
         file_path: Path,
     ) -> list[LangChainDocument]:
 
-        # utf-8-sig also handles UTF-8 text files with a BOM.
         text = file_path.read_text(
             encoding="utf-8-sig",
             errors="replace",

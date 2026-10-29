@@ -17,11 +17,3 @@ def delete_session(session_id: str) -> None:
         timeout=REQUEST_TIMEOUT,
     )
     response.raise_for_status()
-
-
-# def send_heartbeat(session_id: str) -> None:
-#     response = requests.post(
-#         url=f"{SESSION_API_URL}/{session_id}/heartbeat",
-#         timeout=5,
-#     )
-#     response.raise_for_status()

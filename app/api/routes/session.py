@@ -44,19 +44,3 @@ def end_session(session_id: str) -> SessionEndResponse:
         session_id=session_id,
         status="ended",
     )
-
-# @router.post(
-#     "/{session_id}/heartbeat"
-# )
-# def session_heartbeat(
-#     session_id: str
-# ) -> dict:
-#     try:
-#         session_manager.heartbeat(session_id)
-#     except ValueError as e:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail=str(e),
-#         ) from e
-#
-#     return {"session_id": session_id, "status": "active"}

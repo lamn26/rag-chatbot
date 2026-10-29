@@ -1,29 +1,23 @@
-# Environment variables
 .env
 .env.*
 !.env.example
 
-# Python
 .venv/
 venv/
 __pycache__/
 **/__pycache__/
 *.py[cod]
 
-# Testing and type checking
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
 htmlcov/
 
-# IDE
 .vscode/
 .idea/
 
-# Generated data and temporary session files
 data/
 
-# OS files
 .DS_Store
 Thumbs.db
